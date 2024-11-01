@@ -1,68 +1,66 @@
-const preSampleText = `To be, or not to be, that is the question: 
-Whether 'tis nobler in the mind to suffer 
-The slings and arrows of outrageous fortune, 
-Or to take arms against a sea of troubles 
+// Predefined sample representing a specific style (e.g., Shakespeare)
+const preSampleText = `To be, or not to be, that is the question:
+Whether 'tis nobler in the mind to suffer
+The slings and arrows of outrageous fortune,
+Or to take arms against a sea of troubles
 And by opposing end them.`;
 
-document.getElementById('compareButton').onclick = function() {
-    compareText();
-};
+// Trigger analysis when button is clicked
+document.getElementById("compareButton").addEventListener("click", compareStyle);
 
-function compareText() {
-    const enteredText = document.getElementById('textInput').value;
-
-    // Check if entered text is not empty
-    if (enteredText.trim() === "") {
-        document.getElementById('result').innerText = "Please enter some text to compare.";
-        return; // Exit the function if no text is entered
+// Main function to compare styles
+async function compareStyle() {
+    const enteredText = document.getElementById("textInput").value;
+    if (!enteredText.trim()) {
+        document.getElementById("result").innerText = "Please enter some text to compare.";
+        return;
     }
 
-    // Extract features from the pre-sample and entered text
     const preSampleFeatures = extractFeatures(preSampleText);
     const enteredTextFeatures = extractFeatures(enteredText);
 
-    // Calculate similarity score
+    // Calculate similarity score based on features
     const similarityScore = analyzeSimilarity(preSampleFeatures, enteredTextFeatures);
 
-    // Display result
-    document.getElementById('result').innerText = `Style Similarity Score: ${similarityScore.toFixed(2)}%`;
+    document.getElementById("result").innerText = `Style Similarity Score: ${similarityScore.toFixed(2)}%`;
 }
 
+// Extracts NLP features from the text using Compromise.js
 function extractFeatures(text) {
-    const words = text.split(/\s+/).filter(Boolean);
-    const uniqueWords = new Set(words);
-    const sentences = text.split(/[.!?]+/).filter(Boolean);
-
+    const doc = nlp(text);
     return {
-        averageSentenceLength: words.length / sentences.length || 0,
-        lexicalDiversity: uniqueWords.size / words.length || 0,
-        wordFrequency: calculateWordFrequency(words)
+        sentenceCount: doc.sentences().length,
+        wordCount: doc.wordCount(),
+        uniqueWords: doc.unique().out('array').length,
+        avgSentenceLength: doc.wordCount() / doc.sentences().length,
+        nouns: doc.nouns().out('array').length,
+        verbs: doc.verbs().out('array').length,
+        adjectives: doc.adjectives().out('array').length,
+        adverbs: doc.adverbs().out('array').length,
     };
 }
 
-function calculateWordFrequency(words) {
-    const frequency = {};
-    words.forEach(word => {
-        frequency[word.toLowerCase()] = (frequency[word.toLowerCase()] || 0) + 1;
+// Calculate similarity score between two sets of features
+function analyzeSimilarity(sampleFeatures, textFeatures) {
+    let similarityScore = 0;
+    const weightFactors = {
+        sentenceCount: 1,
+        wordCount: 1,
+        uniqueWords: 1.5,
+        avgSentenceLength: 2,
+        nouns: 1,
+        verbs: 1,
+        adjectives: 1,
+        adverbs: 1
+    };
+
+    Object.keys(weightFactors).forEach(key => {
+        const diff = Math.abs(sampleFeatures[key] - textFeatures[key]);
+        const maxVal = Math.max(sampleFeatures[key], textFeatures[key]);
+        similarityScore += ((1 - diff / (maxVal || 1)) * weightFactors[key]);
     });
-    return frequency;
-}
 
-function analyzeSimilarity(preSampleFeatures, enteredTextFeatures) {
-    const lengthSimilarity = 100 - Math.abs(preSampleFeatures.averageSentenceLength - enteredTextFeatures.averageSentenceLength) * 10; // Scale to 0-100
-    const diversitySimilarity = 100 - Math.abs(preSampleFeatures.lexicalDiversity - enteredTextFeatures.lexicalDiversity) * 100; // Scale to 0-100
-
-    // Common word frequency similarity
-    const commonWordSimilarity = calculateCommonWordSimilarity(preSampleFeatures.wordFrequency, enteredTextFeatures.wordFrequency);
-
-    // Final similarity score as an average of the three measures
-    return (lengthSimilarity + diversitySimilarity + commonWordSimilarity) / 3;
-}
-
-function calculateCommonWordSimilarity(referenceFreq, enteredFreq) {
-    const commonWords = Object.keys(referenceFreq).filter(word => enteredFreq[word] !== undefined);
-    const totalWords = Object.keys(referenceFreq).length + Object.keys(enteredFreq).length - commonWords.length;
-
-    if (totalWords === 0) return 0; // Avoid division by zero
-    return (commonWords.length / totalWords) * 100; // Percentage of commonality
-}
+    // Normalize score to percentage (0-100)
+    const maxScore = Object.values(weightFactors).reduce((a, b) => a + b, 0);
+    return (similarityScore / maxScore) * 100;
+        }
