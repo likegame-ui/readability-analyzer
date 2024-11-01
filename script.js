@@ -54,4 +54,4 @@ function calculateSimilarity(metrics1, metrics2) {
     const similarity = ((maxScore - readabilityDifference) / maxScore) * 100;
     
     return similarity > 100 ? 100 : similarity; // Cap similarity at 100%
-}
+    }
