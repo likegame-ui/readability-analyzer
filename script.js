@@ -6,14 +6,14 @@ And by opposing end them.`;
 
 function compareText() {
     const enteredText = document.getElementById('textInput').value;
-    
+
     // Extract features from the pre-sample and entered text
     const preSampleFeatures = extractFeatures(preSampleText);
     const enteredTextFeatures = extractFeatures(enteredText);
-    
+
     // Calculate similarity score
     const similarityScore = analyzeSimilarity(preSampleFeatures, enteredTextFeatures);
-    
+
     // Display result
     document.getElementById('result').innerText = `Style Similarity Score: ${similarityScore.toFixed(2)}%`;
 }
@@ -26,8 +26,7 @@ function extractFeatures(text) {
     return {
         averageSentenceLength: words.length / sentences.length || 0,
         lexicalDiversity: uniqueWords.size / words.length || 0,
-        wordFrequency: calculateWordFrequency(words),
-        totalWords: words.length
+        wordFrequency: calculateWordFrequency(words)
     };
 }
 
