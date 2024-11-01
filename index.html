@@ -11,7 +11,7 @@
             padding: 20px;
             background-color: #f4f4f4;
         }
-        h1, h2 {
+        h1 {
             color: #333;
         }
         textarea {
@@ -21,9 +21,9 @@
             font-size: 16px;
             border: 1px solid #ccc;
             border-radius: 4px;
+            margin-bottom: 20px;
         }
         button {
-            margin-top: 10px;
             padding: 10px 15px;
             font-size: 16px;
             color: white;
@@ -44,8 +44,13 @@
 </head>
 <body>
     <h1>Text Style Comparison Tool</h1>
-    <textarea id="textInput" placeholder="Enter your text here..."></textarea>
-    <button onclick="analyzeText()">Analyze</button>
+    <h2>Text 1</h2>
+    <textarea id="textInput1" placeholder="Enter the first text here..."></textarea>
+    
+    <h2>Text 2</h2>
+    <textarea id="textInput2" placeholder="Enter the second text here..."></textarea>
+    
+    <button onclick="compareTexts()">Compare</button>
     <h2 id="result"></h2>
 
     <script src="script.js"></script>
