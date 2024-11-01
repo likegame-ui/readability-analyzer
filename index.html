@@ -3,23 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Text Style Comparison Tool</title>
+    <title>Advanced Text Style Comparison Tool</title>
     <style>
         body { font-family: Arial, sans-serif; }
-        textarea { width: 100%; }
+        textarea { width: 100%; height: 120px; margin-bottom: 10px; }
         button { margin-top: 10px; }
         #result { margin-top: 20px; font-weight: bold; }
     </style>
 </head>
 <body>
-    <h1>Text Style Comparison Tool</h1>
-    <div>
-        <h3>Enter Your Text:</h3>
-        <textarea id="textInput" rows="10" placeholder="Enter your text here..."></textarea>
-        <br>
-        <button id="compareButton">Compare Style</button>
-    </div>
+    <h1>Advanced Text Style Comparison Tool</h1>
+    <textarea id="textInput" placeholder="Enter your text here..."></textarea><br>
+    <button id="compareButton">Compare Style</button>
     <div id="result"></div>
+    <script src="https://cdn.jsdelivr.net/npm/compromise@13.10.0/builds/compromise.min.js"></script>
     <script src="script.js"></script>
 </body>
 </html>
