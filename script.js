@@ -1,31 +1,36 @@
-// Predefined sample representing a specific style (e.g., Shakespeare)
-const preSampleText = `To be, or not to be, that is the question:
-Whether 'tis nobler in the mind to suffer
-The slings and arrows of outrageous fortune,
-Or to take arms against a sea of troubles
-And by opposing end them.`;
+let sampleFeatures = null; // Store features of the sample text
 
-// Trigger analysis when button is clicked
+document.getElementById("saveSampleButton").addEventListener("click", saveSampleStyle);
 document.getElementById("compareButton").addEventListener("click", compareStyle);
 
-// Main function to compare styles
-async function compareStyle() {
+function saveSampleStyle() {
+    const preSampleText = document.getElementById("preSampleInput").value;
+    if (!preSampleText.trim()) {
+        document.getElementById("result").innerText = "Please enter a sample text for reference.";
+        return;
+    }
+    sampleFeatures = extractFeatures(preSampleText);
+    document.getElementById("result").innerText = "Sample style saved successfully!";
+}
+
+function compareStyle() {
+    if (!sampleFeatures) {
+        document.getElementById("result").innerText = "Please save a sample style first.";
+        return;
+    }
+
     const enteredText = document.getElementById("textInput").value;
     if (!enteredText.trim()) {
         document.getElementById("result").innerText = "Please enter some text to compare.";
         return;
     }
 
-    const preSampleFeatures = extractFeatures(preSampleText);
     const enteredTextFeatures = extractFeatures(enteredText);
-
-    // Calculate similarity score based on features
-    const similarityScore = analyzeSimilarity(preSampleFeatures, enteredTextFeatures);
+    const similarityScore = analyzeSimilarity(sampleFeatures, enteredTextFeatures);
 
     document.getElementById("result").innerText = `Style Similarity Score: ${similarityScore.toFixed(2)}%`;
 }
 
-// Extracts NLP features from the text using Compromise.js
 function extractFeatures(text) {
     const doc = nlp(text);
     return {
@@ -40,7 +45,6 @@ function extractFeatures(text) {
     };
 }
 
-// Calculate similarity score between two sets of features
 function analyzeSimilarity(sampleFeatures, textFeatures) {
     let similarityScore = 0;
     const weightFactors = {
@@ -60,7 +64,6 @@ function analyzeSimilarity(sampleFeatures, textFeatures) {
         similarityScore += ((1 - diff / (maxVal || 1)) * weightFactors[key]);
     });
 
-    // Normalize score to percentage (0-100)
     const maxScore = Object.values(weightFactors).reduce((a, b) => a + b, 0);
     return (similarityScore / maxScore) * 100;
-        }
+}
