@@ -20,7 +20,7 @@ function countSyllables(text) {
 
 function countWordSyllables(word) {
     word = word.toLowerCase();
-    if (word.length <= 3) return 1;
-    const syllableMatches = word.match(/[aeiouy]+/g);
-    return syllableMatches ? syllableMatches.length : 1;
+    if (word.length <= 3) return 1; // Simple rule: words with 3 letters or fewer have 1 syllable.
+    const syllableMatches = word.match(/[aeiouy]+/g); // Count vowel groups as syllables.
+    return syllableMatches ? syllableMatches.length : 1; // Default to 1 syllable if no matches.
 }
