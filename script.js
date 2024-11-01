@@ -1,57 +1,60 @@
-function compareTexts() {
-    const text1 = document.getElementById('textInput1').value;
-    const text2 = document.getElementById('textInput2').value;
+const preSampleText = `To be, or not to be, that is the question: 
+Whether 'tis nobler in the mind to suffer 
+The slings and arrows of outrageous fortune, 
+Or to take arms against a sea of troubles 
+And by opposing end them.`;
 
-    const metrics1 = analyzeText(text1);
-    const metrics2 = analyzeText(text2);
-
-    const similarity = calculateSimilarity(metrics1, metrics2);
-
-    document.getElementById('result').innerText = `Comparison Results:\n\n` +
-        `Text 1: ${metrics1.readabilityScore.toFixed(2)}\n` +
-        `Text 2: ${metrics2.readabilityScore.toFixed(2)}\n\n` +
-        `Similarity Score: ${similarity.toFixed(2)}%`;
+function compareText() {
+    const enteredText = document.getElementById('textInput').value;
+    
+    // Extract features from the pre-sample and entered text
+    const preSampleFeatures = extractFeatures(preSampleText);
+    const enteredTextFeatures = extractFeatures(enteredText);
+    
+    // Calculate similarity score
+    const similarityScore = analyzeSimilarity(preSampleFeatures, enteredTextFeatures);
+    
+    // Display result
+    document.getElementById('result').innerText = `Style Similarity Score: ${similarityScore.toFixed(2)}%`;
 }
 
-function analyzeText(text) {
-    const words = text.split(/\s+/).filter(Boolean).length;
-    const sentences = text.split(/[.!?]+/).filter(Boolean).length;
-    const syllables = countSyllables(text);
-    
-    const readabilityScore = 206.835 - (1.015 * (words / sentences)) - (84.6 * (syllables / words));
+function extractFeatures(text) {
+    const words = text.split(/\s+/).filter(Boolean);
+    const uniqueWords = new Set(words);
+    const sentences = text.split(/[.!?]+/).filter(Boolean);
 
     return {
-        readabilityScore: readabilityScore,
-        wordCount: words,
-        sentenceCount: sentences,
-        syllableCount: syllables
+        averageSentenceLength: words.length / sentences.length || 0,
+        lexicalDiversity: uniqueWords.size / words.length || 0,
+        wordFrequency: calculateWordFrequency(words),
+        totalWords: words.length
     };
 }
 
-function countSyllables(text) {
-    const words = text.split(/\s+/);
-    let syllableCount = 0;
-    
-    for (let word of words) {
-        syllableCount += countWordSyllables(word);
-    }
-    return syllableCount;
+function calculateWordFrequency(words) {
+    const frequency = {};
+    words.forEach(word => {
+        frequency[word.toLowerCase()] = (frequency[word.toLowerCase()] || 0) + 1;
+    });
+    return frequency;
 }
 
-function countWordSyllables(word) {
-    word = word.toLowerCase();
-    if (word.length <= 3) return 1; // Simple rule for syllable counting.
-    const syllableMatches = word.match(/[aeiouy]+/g); // Count vowel groups as syllables.
-    return syllableMatches ? syllableMatches.length : 1; // Default to 1 syllable if no matches.
+function analyzeSimilarity(preSampleFeatures, enteredTextFeatures) {
+    // Compare features with the reference
+    const lengthSimilarity = 100 - Math.abs(preSampleFeatures.averageSentenceLength - enteredTextFeatures.averageSentenceLength) * 10; // Scale to 0-100
+    const diversitySimilarity = 100 - Math.abs(preSampleFeatures.lexicalDiversity - enteredTextFeatures.lexicalDiversity) * 100; // Scale to 0-100
+
+    // Common word frequency similarity
+    const commonWordSimilarity = calculateCommonWordSimilarity(preSampleFeatures.wordFrequency, enteredTextFeatures.wordFrequency);
+
+    // Final similarity score as an average of the three measures
+    return (lengthSimilarity + diversitySimilarity + commonWordSimilarity) / 3;
 }
 
-function calculateSimilarity(metrics1, metrics2) {
-    const readabilityDifference = Math.abs(metrics1.readabilityScore - metrics2.readabilityScore);
-    
-    // Similarity can be defined based on the difference in readability scores.
-    // Normalize the difference to a percentage (0 to 100%)
-    const maxScore = 100; // Arbitrary max for comparison, adjust if necessary
-    const similarity = ((maxScore - readabilityDifference) / maxScore) * 100;
-    
-    return similarity > 100 ? 100 : similarity; // Cap similarity at 100%
+function calculateCommonWordSimilarity(referenceFreq, enteredFreq) {
+    const commonWords = Object.keys(referenceFreq).filter(word => enteredFreq[word] !== undefined);
+    const totalWords = Object.keys(referenceFreq).length + Object.keys(enteredFreq).length - commonWords.length;
+
+    if (totalWords === 0) return 0; // Avoid division by zero
+    return (commonWords.length / totalWords) * 100; // Percentage of commonality
 }
