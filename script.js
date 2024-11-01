@@ -4,7 +4,9 @@ The slings and arrows of outrageous fortune,
 Or to take arms against a sea of troubles 
 And by opposing end them.`;
 
-document.getElementById('compareButton').onclick = compareText;
+document.getElementById('compareButton').onclick = function() {
+    compareText();
+};
 
 function compareText() {
     const enteredText = document.getElementById('textInput').value;
