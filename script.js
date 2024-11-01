@@ -9,6 +9,12 @@ document.getElementById('compareButton').onclick = compareText;
 function compareText() {
     const enteredText = document.getElementById('textInput').value;
 
+    // Check if entered text is not empty
+    if (enteredText.trim() === "") {
+        document.getElementById('result').innerText = "Please enter some text to compare.";
+        return; // Exit the function if no text is entered
+    }
+
     // Extract features from the pre-sample and entered text
     const preSampleFeatures = extractFeatures(preSampleText);
     const enteredTextFeatures = extractFeatures(enteredText);
