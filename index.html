@@ -4,14 +4,20 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Text Style Comparison Tool</title>
+    <style>
+        body { font-family: Arial, sans-serif; }
+        textarea { width: 100%; }
+        button { margin-top: 10px; }
+        #result { margin-top: 20px; font-weight: bold; }
+    </style>
 </head>
 <body>
     <h1>Text Style Comparison Tool</h1>
     <div>
         <h3>Enter Your Text:</h3>
-        <textarea id="textInput" rows="10" cols="50" placeholder="Enter your text here..."></textarea>
+        <textarea id="textInput" rows="10" placeholder="Enter your text here..."></textarea>
         <br>
-        <button onclick="compareText()">Compare Style</button>
+        <button id="compareButton">Compare Style</button>
     </div>
     <div id="result"></div>
     <script src="script.js"></script>
