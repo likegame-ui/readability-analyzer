@@ -4,6 +4,8 @@ The slings and arrows of outrageous fortune,
 Or to take arms against a sea of troubles 
 And by opposing end them.`;
 
+document.getElementById('compareButton').onclick = compareText;
+
 function compareText() {
     const enteredText = document.getElementById('textInput').value;
 
@@ -39,7 +41,6 @@ function calculateWordFrequency(words) {
 }
 
 function analyzeSimilarity(preSampleFeatures, enteredTextFeatures) {
-    // Compare features with the reference
     const lengthSimilarity = 100 - Math.abs(preSampleFeatures.averageSentenceLength - enteredTextFeatures.averageSentenceLength) * 10; // Scale to 0-100
     const diversitySimilarity = 100 - Math.abs(preSampleFeatures.lexicalDiversity - enteredTextFeatures.lexicalDiversity) * 100; // Scale to 0-100
 
