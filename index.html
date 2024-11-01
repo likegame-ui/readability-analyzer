@@ -13,8 +13,14 @@
 </head>
 <body>
     <h1>Advanced Text Style Comparison Tool</h1>
-    <textarea id="textInput" placeholder="Enter your text here..."></textarea><br>
+    <h3>Predefined Sample (Used for Style Reference)</h3>
+    <textarea id="preSampleInput" placeholder="Enter your sample content here..."></textarea><br>
+    <button id="saveSampleButton">Save Sample Style</button>
+
+    <h3>Enter Text to Compare</h3>
+    <textarea id="textInput" placeholder="Enter text to compare..."></textarea><br>
     <button id="compareButton">Compare Style</button>
+
     <div id="result"></div>
     <script src="https://cdn.jsdelivr.net/npm/compromise@13.10.0/builds/compromise.min.js"></script>
     <script src="script.js"></script>
